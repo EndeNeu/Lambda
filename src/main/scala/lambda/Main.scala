@@ -39,17 +39,20 @@ object Main {
     //println(exp4.LAmbdaExpressions)
 
     // λx.x
+//    println("λx.x")
     println(identity("x").toString)
 
     // λx.(λy.y x)
+//    println("λx.(λy.y x)")
     println(exp2.toString())
 
+    // λx.x λy.y
+//    println("λx.x λy.y")
     println(exp5.toString)
 
-    /*
-    println(exp5.toString)
+    // λx.(x x)
+//    println("λx.(x x)")
     println(selfApply("x").toString)
-  */
 
     //println("---------------------")
 
