@@ -28,45 +28,52 @@ object Main {
       EX(
         BV(
           "x",
-          AR("x")
+          EX(
+            AR("x")
+          )
         ),
         BV(
           "y",
-          AR("y")
+          EX(
+            AR("y")
+          )
         )
       )
 
     //println(exp4.LAmbdaExpressions)
 
     // λx.x
-//    println("λx.x")
-    println(identity("x").toString)
+    //    println("λx.x")
+    //    println(identity("x").toString)
 
     // λx.(λy.y x)
-//    println("λx.(λy.y x)")
-    println(exp2.toString())
+    //    println("λx.(λy.y x)")
+    //    println(exp2.toString())
 
     // λx.x λy.y
-//    println("λx.x λy.y")
-    println(exp5.toString)
+    //    println("λx.x λy.y")
+    //    println(exp5.toString)
 
     // λx.(x x)
-//    println("λx.(x x)")
-    println(selfApply("x").toString)
+    //    println("λx.(x x)")
+    //    println(selfApply("x").toString)
 
-    //println("---------------------")
+    println("---------------------")
 
+    // λx.x
+    println(identity("x").reduce("y").toString)
 
-    /**
-     *
-     * λy.λx.(y x)
-     *
-     * λy.λx.(y x) z
-     *
-     */
-    //println(lApply("x", "y"))
+    // λx.x λy.y
+    println(exp5.reduce("z").toString)
 
-    //    println(selfApply("x"))
+    //λx.(x x)
+    println(selfApply("x").reduce("z").toString)
+
+    // λx.(λy.y x)
+    println(exp2.reduce("z").toString)
+
+    // λx.λy.(x y)
+    println(lApply("x", "y"))
 
   }
 

@@ -12,7 +12,11 @@ trait LambdaExpression {
 
   def isEmpty: Boolean
 
-  def reduce[T <: LambdaVariable](arg: Argument): LambdaExpression
+  def reduce(arg: Argument, boundVariable: String): LambdaExpression
+
+  def reduce(arg: String): LambdaExpression
+
+  def :+(that: LambdaExpression): LambdaExpression
 
 }
 
@@ -29,6 +33,8 @@ class NonEmptyLambdaExpression(val expressions: List[LambdaExpression]) extends 
   def this(lambda: LambdaExpression) = this(List(lambda))
 
   override def isEmpty = false
+
+  def toList = expressions
 
   //  def apply(arg: LambdaExpression) = this.reduce(arg)
 
@@ -49,6 +55,8 @@ class NonEmptyLambdaExpression(val expressions: List[LambdaExpression]) extends 
   // @TODO
   def +(that: List[NonEmptyLambdaExpression]) = this.expressions.:+(that)
 
+  override def :+(that: LambdaExpression) = new NonEmptyLambdaExpression(expressions.:+(that))
+
   def ++(that: Argument) =
     if (expressions.isEmpty) new NonEmptyLambdaExpression(that)
     else new NonEmptyLambdaExpression(expressions.+:(that))
@@ -66,49 +74,22 @@ class NonEmptyLambdaExpression(val expressions: List[LambdaExpression]) extends 
   def length: Int = expressions.length
 
   /**
-   * EX(BV, AR, BV, AR)
-   *
-   *
-   * EX(BV("x", AR("x")) x
-   *
-   * lx.x y
-   *
-   * lx.(ly.y lz.(z x) x)
-   *
-   *
-   * lx.x -> (x)
-   * EX(BV(x, EX(x)) -> (x)
    *
    *
    * @return
    */
-  override def reduce[T <: LambdaVariable](arg: Argument): LambdaExpression = {
-
-
+  override def reduce(arg: Argument, boundVariable: String = ""): LambdaExpression = {
     expressions.fold(EmptyLambdaExpression)((newEX, currentEX) =>
       currentEX match {
         case bv: BoundVariable =>
-          val boundVariable: String = bv.literal
-          bv.reduce(arg)
-          EmptyLambdaExpression
-        case _ => EmptyLambdaExpression
-
-
+          newEX.:+(bv.reduce(arg, bv.literal))
+        case myArg: Argument =>
+          newEX.:+(myArg)
       })
-
-    EmptyLambdaExpression
   }
 
-
-}
-
-case object Nil extends Nothing {
-
-  // Removal of equals method here might lead to an infinite recursion similar to IntMap.equals.
-  override def equals(that: Any) = that match {
-    case that1: scala.collection.GenSeq[_] => that1.isEmpty
-    case _ => false
-  }
+  override def reduce(arg: String): LambdaExpression =
+    reduce(new Argument(arg))
 }
 
 object EmptyLambdaExpression extends LambdaExpression {
@@ -117,17 +98,22 @@ object EmptyLambdaExpression extends LambdaExpression {
 
   def empty: NonEmptyLambdaExpression = new NonEmptyLambdaExpression(List())
 
-  def ++(lambda: LambdaExpression): LambdaExpression = new NonEmptyLambdaExpression(List(lambda))
+  override def :+(lambda: LambdaExpression): LambdaExpression = new NonEmptyLambdaExpression(List(lambda))
 
-  override def reduce[T <: LambdaVariable](arg: Argument): LambdaExpression = EmptyLambdaExpression
+  override def reduce(arg: Argument, boundVariable: String = ""): LambdaExpression = EmptyLambdaExpression
+
+  override def reduce(arg: String): LambdaExpression = EmptyLambdaExpression
+
+  override def toString = throw new Exception("Empty expression has no toString method.")
+
 }
 
 
-class BoundVariable(val literal: String, val someArgument: List[LambdaExpression]) extends LambdaVariable {
+class BoundVariable(val literal: String, val arguments: List[LambdaExpression]) extends LambdaVariable {
 
   override def isEmpty = false
 
-  override def toString = someArgument.foldLeft("")((acc, curr) => curr match {
+  override def toString = arguments.foldLeft("")((acc, curr) => curr match {
     case bv: BoundVariable => bv.toString
     case arg: Argument =>
       if (argLength > 1 && !acc.contains("(")) acc + "(" + arg.literal + " "
@@ -136,33 +122,43 @@ class BoundVariable(val literal: String, val someArgument: List[LambdaExpression
   }) + " "
 
   def argumentsToString =
-    if (someArgument.isEmpty) ""
-    else if (argLength > 1) "(" + someArgument.map(_.toString).reduce(_ + _).trim + ")"
-    else someArgument.map(_.toString).reduce(_ + _)
+    if (arguments.isEmpty) ""
+    else if (argLength > 1) "(" + arguments.map(_.toString).reduce(_ + _).trim + ")"
+    else arguments.map(_.toString).reduce(_ + _)
 
-  def argLength: Int = someArgument.foldLeft(0)((acc, curr) => curr match {
+  def argLength: Int = arguments.foldLeft(0)((acc, curr) => curr match {
     case ex: NonEmptyLambdaExpression => acc + ex.length
     case arg: Argument => acc + 1
   })
 
-  override def reduce(arg: Argument): LambdaExpression = {
-
-    someArgument.foldLeft(EmptyLambdaExpression.empty)((newLambda, currentLambda) => {
-
-      val t: NonEmptyLambdaExpression = newLambda
-
-      val r = List.empty
-
-      currentLambda match {
-        case arg: Argument => newLambda.++(new Argument(arg.literal))
+  /**
+   *
+   *
+   * @param arg
+   * @return
+   */
+  override def reduce(arg: Argument, boundVariable: String = ""): LambdaExpression = {
+    arguments.foldLeft(EmptyLambdaExpression.empty)((acc, curr) => {
+      curr match {
+        case bv: BoundVariable =>
+          if (boundVariable.isEmpty) acc.:+(bv.reduce(arg, bv.literal))
+          else if(bv.literal != boundVariable) acc.:+(bv)
+          else acc.:+(bv.reduce(arg, boundVariable))
+        case myArg: Argument if myArg.literal == boundVariable & !boundVariable.isEmpty =>
+          acc.:+(new Argument(arg.literal))
+        case myArg: Argument =>
+          acc.:+(myArg)
+        case _ =>
+          throw new Exception("Unsupported lambda given.")
       }
     }
     )
-
-
-    EmptyLambdaExpression
   }
 
+  override def reduce(arg: String) =
+    reduce(new Argument(arg))
+
+  override def :+(that: LambdaExpression): LambdaExpression = ???
 }
 
 class Argument(val literal: String) extends LambdaVariable {
@@ -171,7 +167,11 @@ class Argument(val literal: String) extends LambdaVariable {
   override def toString = literal
 
   // @TODO add lambda exceptions.
-  override def reduce[T <: LambdaVariable](arg: Argument): LambdaExpression =
+  override def reduce(arg: Argument, boundVariable: String = ""): LambdaExpression =
     throw new Exception("Reduce is unsupported on arguments")
 
+  override def reduce(arg: String): LambdaExpression =
+    reduce(new Argument(arg))
+
+  override def :+(that: LambdaExpression): LambdaExpression = ???
 }
