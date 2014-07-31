@@ -36,8 +36,6 @@ class NonEmptyLambdaExpression(val expressions: List[LambdaExpression]) extends 
 
   def toList = expressions
 
-  //  def apply(arg: LambdaExpression) = this.reduce(arg)
-
   /**
    *
    * Allow LambdaExpression merging.
@@ -111,14 +109,18 @@ object EmptyLambdaExpression extends LambdaExpression {
 
 class BoundVariable(val literal: String, val arguments: List[LambdaExpression]) extends LambdaVariable {
 
+  def this(literal: String, lambda: LambdaExpression) = this(literal, List(lambda))
+
   override def isEmpty = false
 
-  override def toString = arguments.foldLeft("")((acc, curr) => curr match {
-    case bv: BoundVariable => bv.toString
-    case arg: Argument =>
-      if (argLength > 1 && !acc.contains("(")) acc + "(" + arg.literal + " "
-      else if (argLength > 1) acc + arg.literal + ")"
-      else acc + arg.literal + " "
+  override def toString = "λ" + literal.toString + "." + arguments.foldLeft("")((acc, curr) => {
+    curr match {
+      case bv: BoundVariable => bv.toString
+      case arg: Argument =>
+        if (argLength > 1 && !acc.contains("(")) acc + "(" + arg.literal + " "
+        else if (argLength > 1) acc + arg.literal + ")"
+        else acc + arg.literal + " "
+    }
   }) + " "
 
   def argumentsToString =
@@ -126,10 +128,14 @@ class BoundVariable(val literal: String, val arguments: List[LambdaExpression]) 
     else if (argLength > 1) "(" + arguments.map(_.toString).reduce(_ + _).trim + ")"
     else arguments.map(_.toString).reduce(_ + _)
 
-  def argLength: Int = arguments.foldLeft(0)((acc, curr) => curr match {
-    case ex: NonEmptyLambdaExpression => acc + ex.length
-    case arg: Argument => acc + 1
-  })
+  def argLength: Int = arguments.foldLeft(0)((acc, curr) =>
+    curr match {
+      case ex: NonEmptyLambdaExpression => acc + ex.length
+      case _: BoundVariable | _: Argument => acc + 1
+    }
+  )
+
+  def toList = arguments
 
   /**
    *
@@ -142,8 +148,7 @@ class BoundVariable(val literal: String, val arguments: List[LambdaExpression]) 
       curr match {
         case bv: BoundVariable =>
           if (boundVariable.isEmpty) acc.:+(bv.reduce(arg, bv.literal))
-          else if(bv.literal != boundVariable) acc.:+(bv)
-          else acc.:+(bv.reduce(arg, boundVariable))
+          else acc.:+(new BoundVariable(bv.literal, bv.reduce(arg, boundVariable)))
         case myArg: Argument if myArg.literal == boundVariable & !boundVariable.isEmpty =>
           acc.:+(new Argument(arg.literal))
         case myArg: Argument =>
@@ -151,13 +156,13 @@ class BoundVariable(val literal: String, val arguments: List[LambdaExpression]) 
         case _ =>
           throw new Exception("Unsupported lambda given.")
       }
-    }
-    )
+    })
   }
 
   override def reduce(arg: String) =
     reduce(new Argument(arg))
 
+  // @TODO
   override def :+(that: LambdaExpression): LambdaExpression = ???
 }
 
@@ -173,5 +178,6 @@ class Argument(val literal: String) extends LambdaVariable {
   override def reduce(arg: String): LambdaExpression =
     reduce(new Argument(arg))
 
+  // @TODO
   override def :+(that: LambdaExpression): LambdaExpression = ???
 }

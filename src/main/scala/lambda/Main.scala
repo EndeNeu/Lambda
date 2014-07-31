@@ -1,6 +1,6 @@
 package lambda
 
-import lambda.LambdaBuilder.{AR, BV, EX}
+import lambda.LambdaBuilder.{AR, EX, BV}
 import lambda.core.Lambda._
 
 object Main {
@@ -40,6 +40,17 @@ object Main {
         )
       )
 
+    val exp6 =
+      EX(
+        AR("x"),
+        BV(
+          "y",
+          AR("x")
+        )
+      )
+
+    println(exp6.toString)
+
     //println(exp4.LAmbdaExpressions)
 
     // λx.x
@@ -60,20 +71,24 @@ object Main {
 
     println("---------------------")
 
-    // λx.x
-    println(identity("x").reduce("y").toString)
+    // λx.x -> z
+    println(identity("x").reduce("z").toString)
 
-    // λx.x λy.y
+    // λx.x λy.y -> z z
     println(exp5.reduce("z").toString)
 
-    //λx.(x x)
+    //λx.(x x) -> z z
     println(selfApply("x").reduce("z").toString)
 
-    // λx.(λy.y x)
+    // λx.(λy.y x) -> λy.y z
     println(exp2.reduce("z").toString)
 
-    // λx.λy.(x y)
-    println(lApply("x", "y"))
+    // λx.λy.(x y) -> λy.(z x)
+    println(lApply("x", "y").reduce("z").toString)
+
+    // x λy.x -> x x
+    println(exp6.reduce("z").toString)
+
 
   }
 

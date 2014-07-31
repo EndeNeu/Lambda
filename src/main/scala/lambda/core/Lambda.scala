@@ -28,15 +28,16 @@ object Lambda {
   /**
    * λx.λy.(x y)
    */
-  def lApply(x: String, y: String) = EX(
-    BV(
-      x,
+  def lApply(x: String, y: String) =
+    EX(
       BV(
-        y,
-        AR(x),
-        AR(y)
+        x,
+        BV(
+          y,
+          AR(x),
+          AR(y)
+        )
       )
     )
-  )
 
 }
