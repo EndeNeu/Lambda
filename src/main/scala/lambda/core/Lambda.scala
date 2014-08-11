@@ -1,8 +1,11 @@
 package lambda.core
 
 import lambda.LambdaBuilder.{AR, BV, EX}
-import lambda.{BoundVariable, NonEmptyLambdaExpression}
+import lambda.model.{BoundVariable, NonEmptyLambdaExpression}
 
+/**
+ * Contains some fuoundamental lambda functions.
+ */
 object Lambda {
 
   def simpleLambda(variable: String): BoundVariable = BV(variable, AR(variable))

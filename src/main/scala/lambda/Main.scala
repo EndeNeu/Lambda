@@ -81,6 +81,11 @@ object Main {
     // x λy.x -> x x
     println(exp6.reduce("z").toString)
 
+    // λy.(y λy.y) (x) -> x λy.y
+    val exp = EX(BV("y", AR("y"), BV("y", AR("y"))))
+    println(exp.reduce("x"))
+
+    println("---------------------")
 
     val test =
       EX(

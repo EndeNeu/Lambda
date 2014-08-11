@@ -1,16 +1,15 @@
 package lambda
 
+import model.{Argument, BoundVariable, NonEmptyLambdaExpression, LambdaExpression}
+
+/**
+ * Provides utility methods to build lambda definitons.
+ */
 object LambdaBuilder {
 
-  /**
-   *
-   * EX(boundvar, arg)
-   *
-   */
   object EX {
     def apply(expressions: LambdaExpression*) =
       new NonEmptyLambdaExpression(expressions.toList)
-
 
     def apply(tuple: (LambdaExpression, LambdaExpression)) =
       new NonEmptyLambdaExpression(List(tuple._1, tuple._2))
@@ -18,7 +17,6 @@ object LambdaBuilder {
   }
 
   object BV {
-
     def apply(x: String, expression: NonEmptyLambdaExpression) =
       new BoundVariable(x, expression)
 
