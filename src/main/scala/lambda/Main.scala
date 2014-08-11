@@ -1,6 +1,6 @@
 package lambda
 
-import lambda.LambdaBuilder.{AR, EX, BV}
+import lambda.LambdaBuilder.{AR, BV, EX}
 import lambda.core.Lambda._
 
 object Main {
@@ -11,15 +11,11 @@ object Main {
     val exp2 = EX(
       BV(
         "x",
-        EX(
-          BV(
-            "y",
-            EX(
-              AR("y")
-            )
-          ),
-          AR("x")
-        )
+        BV(
+          "y",
+          AR("y")
+        ),
+        AR("x")
       )
     )
 
@@ -28,15 +24,11 @@ object Main {
       EX(
         BV(
           "x",
-          EX(
-            AR("x")
-          )
+          AR("x")
         ),
         BV(
           "y",
-          EX(
-            AR("y")
-          )
+          AR("y")
         )
       )
 
@@ -49,9 +41,6 @@ object Main {
         )
       )
 
-    println(exp6.toString)
-
-    //println(exp4.LAmbdaExpressions)
 
     // λx.x
     //    println("λx.x")
@@ -69,6 +58,9 @@ object Main {
     //    println("λx.(x x)")
     //    println(selfApply("x").toString)
 
+    // x λy.x
+    //    println(exp6.toString)
+
     println("---------------------")
 
     // λx.x -> z
@@ -83,13 +75,27 @@ object Main {
     // λx.(λy.y x) -> λy.y z
     println(exp2.reduce("z").toString)
 
-    // λx.λy.(x y) -> λy.(z x)
+    // λx.λy.(x y) (z)-> λy.(z y)
     println(lApply("x", "y").reduce("z").toString)
 
     // x λy.x -> x x
     println(exp6.reduce("z").toString)
 
 
+    val test =
+      EX(
+        AR("x"),
+        EX(
+          AR("y"),
+          BV("s",
+            AR("s")
+          )
+        ),
+        AR("g")
+      )
+
+    println("flattens:")
+    println(test.flatten().toString)
   }
 
 }

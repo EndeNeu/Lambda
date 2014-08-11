@@ -20,10 +20,10 @@ object LambdaBuilder {
   object BV {
 
     def apply(x: String, expression: NonEmptyLambdaExpression) =
-      new BoundVariable(x, expression.toList)
+      new BoundVariable(x, expression)
 
     def apply(x: String, expression: LambdaExpression*) =
-      new BoundVariable(x, expression.toList)
+      new BoundVariable(x, new NonEmptyLambdaExpression(expression.toList))
   }
 
   object AR {

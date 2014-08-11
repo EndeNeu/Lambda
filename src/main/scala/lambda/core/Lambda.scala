@@ -18,10 +18,8 @@ object Lambda {
   def selfApply(x: String): NonEmptyLambdaExpression =
     EX(
       BV(x,
-        EX(
-          AR(x),
-          AR(x)
-        )
+        AR(x),
+        AR(x)
       )
     )
 
