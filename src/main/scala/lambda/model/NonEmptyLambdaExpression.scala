@@ -46,7 +46,11 @@ class NonEmptyLambdaExpression(val lambdas: List[LambdaExpression]) extends Lamb
 
   def length: Int = lambdas.length
 
-  override def reduce(arg: Argument, newVariable: String): LambdaExpression =
-    new NonEmptyLambdaExpression(lambdas.map(_.reduce(arg, newVariable)))
+  override def betaReduce(arg: LambdaExpression, newVariable: String): LambdaExpression =
+    new NonEmptyLambdaExpression(lambdas.map(_.betaReduce(arg, newVariable)))
+
+  override def betaReduce(): LambdaExpression = {
+    EmptyLambdaExpression
+  }
 
 }

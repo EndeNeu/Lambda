@@ -13,9 +13,13 @@ trait LambdaExpression {
 
   def isEmpty: Boolean
 
-  def reduce(arg: String): LambdaExpression = reduce(new Argument(arg), "")
+  def betaReduce(arg: String): LambdaExpression = betaReduce(new Argument(arg), "")
 
-  def reduce(arg: Argument, newVariable: String): LambdaExpression
+  def betaReduce(arg: LambdaExpression): LambdaExpression = betaReduce(arg, "")
+
+  def betaReduce(arg: LambdaExpression, newVariable: String): LambdaExpression
+
+  def betaReduce(): LambdaExpression
 
   def :+(that: NonEmptyLambdaExpression): LambdaExpression
 

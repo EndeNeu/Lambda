@@ -18,8 +18,8 @@ class Argument(val literal: String) extends LambdaVariable {
    *
    * @return Argument
    */
-  override def reduce(arg: Argument, newVariable: String): LambdaExpression =
-    if (literal == newVariable) new Argument(arg.literal) else this
+  override def betaReduce(arg: LambdaExpression, newVariable: String): LambdaExpression =
+    if (literal == newVariable) arg else this
 
   override def toList: List[LambdaExpression] =
     throw new LambdaException("toList method is undefined for arguments.")
@@ -30,4 +30,6 @@ class Argument(val literal: String) extends LambdaVariable {
   override def +:(that: NonEmptyLambdaExpression): LambdaExpression =
     throw new LambdaException("prepend method is undefined for arguments.")
 
+  override def betaReduce(): LambdaExpression =
+    throw new LambdaException("prepend method is undefined for arguments.")
 }

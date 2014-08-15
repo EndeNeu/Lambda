@@ -22,16 +22,16 @@ class BoundVariable(val literal: String, val nonEmptyLambda: NonEmptyLambdaExpre
    * @param newVariable
    * @return
    */
-  override def reduce(arg: Argument, newVariable: String): LambdaExpression =
+  override def betaReduce(arg: LambdaExpression, newVariable: String): LambdaExpression =
   // if we don't have a bound variable yet, reduce this bound variable
     if (newVariable.isEmpty)
-      new NonEmptyLambdaExpression(nonEmptyLambda.lambdas.map(_.reduce(arg, literal)))
+      new NonEmptyLambdaExpression(nonEmptyLambda.lambdas.map(_.betaReduce(arg, literal)))
     // if instead this is a free variable do nothing
     else if (newVariable == literal)
       this
-    // otherwise recude this bound variable
+    // otherwise reduce this bound variable
     else
-      new BoundVariable(literal, new NonEmptyLambdaExpression(nonEmptyLambda.lambdas.map(_.reduce(arg, newVariable))))
+      new BoundVariable(literal, new NonEmptyLambdaExpression(nonEmptyLambda.lambdas.map(_.betaReduce(arg, newVariable))))
 
   /**
    * Allow chaining using a bound variable.
@@ -51,4 +51,5 @@ class BoundVariable(val literal: String, val nonEmptyLambda: NonEmptyLambdaExpre
   override def +:(that: NonEmptyLambdaExpression): LambdaExpression =
     new BoundVariable(literal, nonEmptyLambda.+:(that))
 
+  override def betaReduce(): LambdaExpression = ???
 }
