@@ -1,5 +1,7 @@
 package lambda.model
 
+import lambda.exception.LambdaException
+
 /**
  * λ
  *
@@ -19,7 +21,8 @@ trait LambdaExpression {
 
   def betaReduce(arg: LambdaExpression, newVariable: String): LambdaExpression
 
-  def betaReduce(): LambdaExpression
+  def betaReduce(reduceAll: Boolean = false): LambdaExpression =
+    throw new LambdaException("Parameterless beta reduce is not supported on " + this.getClass)
 
   def :+(that: NonEmptyLambdaExpression): LambdaExpression
 
@@ -40,15 +43,11 @@ trait LambdaExpression {
       current match {
         case arg: Argument => expressions.head match {
           case arg: Argument => " "
-          case _: BoundVariable | _: NonEmptyLambdaExpression => " "
+          case _ => " "
         }
-        case bv: BoundVariable => expressions.head match {
+        case variable@(_: BoundVariable | _: NonEmptyLambdaExpression) => expressions.head match {
           case arg: Argument => ""
-          case _: BoundVariable | _: NonEmptyLambdaExpression => " "
-        }
-        case exp: NonEmptyLambdaExpression => expressions.head match {
-          case arg: Argument => ""
-          case _: BoundVariable | _: NonEmptyLambdaExpression => " "
+          case _ => " "
         }
       }
     }

@@ -30,6 +30,4 @@ class Argument(val literal: String) extends LambdaVariable {
   override def +:(that: NonEmptyLambdaExpression): LambdaExpression =
     throw new LambdaException("prepend method is undefined for arguments.")
 
-  override def betaReduce(): LambdaExpression =
-    throw new LambdaException("prepend method is undefined for arguments.")
 }

@@ -1,22 +1,23 @@
 package lambda.model
 
-class BoundVariable(val literal: String, val nonEmptyLambda: NonEmptyLambdaExpression) extends LambdaVariable {
-
-  def this(literal: String, lambda: LambdaExpression) = this(literal, new NonEmptyLambdaExpression(List(lambda)))
+class BoundVariable(val literal: String, val lambdas: List[LambdaExpression]) extends LambdaVariable {
 
   override def isEmpty = false
 
   override def toString = "λ" + literal.toString + "." + argumentsToString
 
   def argumentsToString =
-    if (nonEmptyLambda.length == 0) ""
-    else if (nonEmptyLambda.length > 1) "(" + nonEmptyLambda.toString + ")"
-    else nonEmptyLambda.toString
+    if (lambdas.length == 0) ""
+    else if (lambdas.length > 1) "(" + stringifyLambdas() + ")"
+    else stringifyLambdas()
 
-  override def toList: List[LambdaExpression] = nonEmptyLambda.lambdas
+  def stringifyLambdas() =
+    lambdas.map(_.toString).reduce { _ + " " + _ }
+
+  override def toList: List[LambdaExpression] = lambdas
 
   /**
-   * Given an argument, reduce a lambda expression to the minimum terms.
+   * Given an argument, reduce a lambda expression.
    *
    * @param arg
    * @param newVariable
@@ -25,31 +26,30 @@ class BoundVariable(val literal: String, val nonEmptyLambda: NonEmptyLambdaExpre
   override def betaReduce(arg: LambdaExpression, newVariable: String): LambdaExpression =
   // if we don't have a bound variable yet, reduce this bound variable
     if (newVariable.isEmpty)
-      new NonEmptyLambdaExpression(nonEmptyLambda.lambdas.map(_.betaReduce(arg, literal)))
+      new NonEmptyLambdaExpression(lambdas.map(_.betaReduce(arg, literal)))
     // if instead this is a free variable do nothing
     else if (newVariable == literal)
       this
     // otherwise reduce this bound variable
     else
-      new BoundVariable(literal, new NonEmptyLambdaExpression(nonEmptyLambda.lambdas.map(_.betaReduce(arg, newVariable))))
+      new BoundVariable(literal, lambdas.map(_.betaReduce(arg, newVariable)))
 
   /**
    * Allow chaining using a bound variable.
    */
   def :+(that: BoundVariable): LambdaExpression =
-    this.:+(that.nonEmptyLambda)
+    new BoundVariable(literal, lambdas ++ that.lambdas)
 
   /**
    * Allow chaining using a bound variable.
    */
   def +:(that: BoundVariable): LambdaExpression =
-    this.+:(that.nonEmptyLambda)
+    new BoundVariable(literal, lambdas ++ that.lambdas)
 
   override def :+(that: NonEmptyLambdaExpression): LambdaExpression =
-    new BoundVariable(literal, nonEmptyLambda.:+(that))
+    new BoundVariable(literal, lambdas ++ that.lambdas)
 
   override def +:(that: NonEmptyLambdaExpression): LambdaExpression =
-    new BoundVariable(literal, nonEmptyLambda.+:(that))
+    new BoundVariable(literal, lambdas ++ that.lambdas)
 
-  override def betaReduce(): LambdaExpression = ???
 }
