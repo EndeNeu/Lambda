@@ -30,6 +30,8 @@ trait LambdaExpression {
 
   def toList: List[LambdaExpression]
 
+  def getStructure(): String
+
   /**
    * Helper method that look ahead in the lambda to fix some spacing issues
    * when outputting the expression to string.

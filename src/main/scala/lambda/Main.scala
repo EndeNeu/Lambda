@@ -1,5 +1,6 @@
 package lambda
 
+import core.LambdaParser
 import lambda.LambdaBuilder.{AR, BV, EX}
 import lambda.core.Lambda._
 
@@ -150,6 +151,26 @@ object Main {
     println(exp7.betaReduce().toString)
     println("x λx.(λy.y x) λt.t -> x λt.t")
     println(exp7.betaReduce(true).toString)
+
+    println("---------------------")
+    println("string parser")
+
+//    val t: NonEmptyLambdaExpression = LambdaParser.fromString("λx.x")
+//    println(t.toString)
+
+
+
+//    println(LambdaParser.fromString("λx.(x y)").toString)
+    // TODO
+    println(LambdaParser.fromString("λx.(λy.(x y))").toString)
+    println(LambdaParser.fromString("λx.(λy.x y)").toString)
+    println(LambdaParser.fromString("λx.y").toString)
+
+    println("---------------------")
+    println("structure")
+
+    println("λx.(λy.(x y))")
+    println(LambdaParser.fromString("λx.(λy.(x y))").getStructure())
 
   }
 

@@ -55,7 +55,11 @@ class NonEmptyLambdaExpression(val lambdas: List[LambdaExpression]) extends Lamb
   override def betaReduce(arg: LambdaExpression, newVariable: String): LambdaExpression =
     new NonEmptyLambdaExpression(lambdas.map(_.betaReduce(arg, newVariable)))
 
+  /**
+   *
+   */
   override def betaReduce(reduceAll: Boolean = false): LambdaExpression = {
+
     def iterate(expressions: List[LambdaExpression]): List[LambdaExpression] = {
       val reduced = betaReducerHelper(expressions)
       if (reduced != expressions && reduceAll) iterate(reduced)
@@ -84,4 +88,8 @@ class NonEmptyLambdaExpression(val lambdas: List[LambdaExpression]) extends Lamb
       })
     )
 
+  override def getStructure(): String =
+    "EX(" + lambdas.foldLeft("") {
+      _ + " " + _.getStructure()
+    } + ")"
 }

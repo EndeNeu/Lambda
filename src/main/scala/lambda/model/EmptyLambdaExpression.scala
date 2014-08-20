@@ -23,4 +23,7 @@ object EmptyLambdaExpression extends LambdaExpression {
 
   override def +:(that: NonEmptyLambdaExpression): LambdaExpression = that
 
+  override def getStructure(): String =
+    throw new LambdaException("Empty expression has no getStructure() method.")
+
 }
