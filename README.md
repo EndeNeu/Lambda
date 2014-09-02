@@ -49,7 +49,7 @@ LambdaParser.fromString("λx.x") // returns the identity expression
 
 ### Known issues ###
 
-To parse a lambda expression from a string the arguments of the bound variable must be wrapped in paenthesys if there's more than one argument:
+To parse a lambda expression from a string the arguments of the bound variable must be wrapped in parentheses if there's more than one argument:
 
 ```
 #!scala
