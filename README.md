@@ -1,13 +1,14 @@
 # Lambda Expression Library #
 
-This is a simply lambda expression parser which offers also the possibility to apply beta reduction operations.
+This is a simply lambda expression parser which offers also the possibility to apply beta reduction operations. The library is fully functional, every operation applied returns always a new expression, there's no mutability.
 
 * Create lambda expressions;
 * Beta reduction with lambda expression as argument;
 * Auto Beta reduction;
 * Beta reduction to minimal term;
-* Core lambda expressions (in expansion)
-* Parse lambda expression form string.
+* Core lambda expressions (in expansion);
+* Parse lambda expression form string;
+* Takes into account Free Variables during beta reduction;
 
 ### Samples Definition ###
 
@@ -48,7 +49,7 @@ LambdaParser.fromString("λx.x") // returns the identity expression
 
 ### Known issues ###
 
-To parse a lambda expression from a string the arguments of the bound variable must be wrapped in paenthesys if there's more than one argument:
+To parse a lambda expression from a string the arguments of the bound variable must be wrapped in parentheses if there's more than one argument:
 
 ```
 #!scala
