@@ -1,6 +1,6 @@
 # Lambda Expression Library #
 
-This is a simply lambda expression parser which offers also the possibility to apply beta reduction operations.
+This is a simply lambda expression parser which offers also the possibility to apply beta reduction operations. The library is fully functional, every operation applied returns always a new expression, there's no mutability.
 
 * Create lambda expressions;
 * Beta reduction with lambda expression as argument;
