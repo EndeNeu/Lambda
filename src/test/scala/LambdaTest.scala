@@ -1,12 +1,11 @@
 import lambda.LambdaBuilder.{AR, BV, EX}
-import lambda.core.Lambda.{lApply, selfApply, identity}
+import lambda.core.Lambda.{identity, lApply, selfApply}
 import lambda.core.LambdaParser
 import lambda.model.NonEmptyLambdaExpression
 import org.specs2.mock.Mockito
 import org.specs2.mutable._
-import scala.xml.XML
 
-class LambdaTest extends Mockito with Specification {
+class LambdaTest extends Specification with Mockito {
 
   // λx.(λy.y x)
   val exp2 = EX(BV("x", BV("y", AR("y")),AR("x")))
