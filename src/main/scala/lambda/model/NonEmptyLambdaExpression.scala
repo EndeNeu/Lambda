@@ -1,5 +1,7 @@
 package lambda.model
 
+import annotation.tailrec
+
 
 class NonEmptyLambdaExpression(val lambdas: List[LambdaExpression]) extends LambdaExpression {
 
@@ -46,12 +48,19 @@ class NonEmptyLambdaExpression(val lambdas: List[LambdaExpression]) extends Lamb
     if (lambdas.isEmpty) new NonEmptyLambdaExpression(that)
     else new NonEmptyLambdaExpression(lambdas.+:(that))
 
+
   override def toString = lambdas.map(_.toString).reduceLeft {
     _ + " " + _
   }
 
+  /**
+   * The lenght of a NonEmptyLambdaExpression comes from its arguments.
+   */
   def length: Int = lambdas.length
 
+  /**
+   * Beta reduce the expression.
+   */
   override def betaReduce(arg: LambdaExpression, newVariable: String): LambdaExpression =
     new NonEmptyLambdaExpression(lambdas.map(_.betaReduce(arg, newVariable)))
 
@@ -60,6 +69,11 @@ class NonEmptyLambdaExpression(val lambdas: List[LambdaExpression]) extends Lamb
    */
   override def betaReduce(reduceAll: Boolean = false): LambdaExpression = {
 
+    /**
+     *  Recursively reduce the expressions, if reduceAll is set
+     *  reduce to minimum.
+     */
+    @tailrec
     def iterate(expressions: List[LambdaExpression]): List[LambdaExpression] = {
       val reduced = betaReducerHelper(expressions)
       if (reduced != expressions && reduceAll) iterate(reduced)
@@ -70,8 +84,8 @@ class NonEmptyLambdaExpression(val lambdas: List[LambdaExpression]) extends Lamb
   }
 
   /**
-  * Helper function that folds a list of lambdas
-  */
+   * Helper function that folds a list of lambdas
+   */
   private def betaReducerHelper(expressions: List[LambdaExpression]): List[LambdaExpression] =
   // @TODO avoid wrapping bound variable reduction in a non empty expression.
   // the flat list is necessary because lambda reductions for bound variables have a NonEmptyLambdaExpression as wrapper
@@ -88,6 +102,9 @@ class NonEmptyLambdaExpression(val lambdas: List[LambdaExpression]) extends Lamb
       })
     )
 
+  /**
+   * Helper method to determine the structure of a NELE
+   */
   override def getStructure(): String =
     "EX(" + lambdas.foldLeft("") {
       _ + " " + _.getStructure()

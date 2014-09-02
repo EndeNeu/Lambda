@@ -6,11 +6,18 @@ class BoundVariable(val literal: String, val lambdas: List[LambdaExpression]) ex
 
   override def toString = "λ" + literal.toString + "." + argumentsToString
 
-  def argumentsToString =
+  /**
+   *
+   */
+  def argumentsToString = {
     if (lambdas.length == 0) ""
     else if (lambdas.length > 1) "(" + stringifyLambdas() + ")"
     else stringifyLambdas()
+  }
 
+  /**
+   * Helper method.
+   */
   def stringifyLambdas() =
     lambdas.map(_.toString).reduce {
       _ + " " + _
@@ -55,5 +62,7 @@ class BoundVariable(val literal: String, val lambdas: List[LambdaExpression]) ex
     new BoundVariable(literal, lambdas ++ that.lambdas)
 
   override def getStructure(): String =
-    "BV(" + lambdas.foldLeft("") { _ + _.getStructure() } + ")"
+    "BV(" + lambdas.foldLeft("") {
+      _ + _.getStructure()
+    } + ")"
 }
