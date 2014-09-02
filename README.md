@@ -6,9 +6,9 @@ This is a simply lambda expression parser which offers also the possibility to a
 * Beta reduction with lambda expression as argument;
 * Auto Beta reduction;
 * Beta reduction to minimal term;
-* Core lambda expressions (in expansion)
-* Parse lambda expression form string.
-* Takes into account Free Variables.
+* Core lambda expressions (in expansion);
+* Parse lambda expression form string;
+* Takes into account Free Variables during beta reduction;
 
 ### Samples Definition ###
 
