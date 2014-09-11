@@ -11,12 +11,12 @@ class Argument(val literal: String) extends LambdaVariable {
   /**
    * Reduce on arguments should either yield the argument itself, if
    * the bound variable is different from the argument literal
-   * or a new argument with the bound variable as literal.
+   * or be substituted by the new LambdaExpression.
    *
-   * @param arg: Argument
+   * @param arg: LambdaExpression
    * @param newVariable: String
    *
-   * @return Argument
+   * @return LambdaExpression
    */
   override def betaReduce(arg: LambdaExpression, newVariable: String): LambdaExpression =
     if (literal == newVariable) arg else this

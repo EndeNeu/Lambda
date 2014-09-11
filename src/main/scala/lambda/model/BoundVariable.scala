@@ -7,9 +7,9 @@ class BoundVariable(val literal: String, val lambdas: List[LambdaExpression]) ex
   override def toString = "λ" + literal.toString + "." + argumentsToString
 
   /**
-   *
+   * Stringify the arguments.
    */
-  def argumentsToString = {
+  private[model] def argumentsToString = {
     if (lambdas.length == 0) ""
     else if (lambdas.length > 1) "(" + stringifyLambdas() + ")"
     else stringifyLambdas()
@@ -18,7 +18,7 @@ class BoundVariable(val literal: String, val lambdas: List[LambdaExpression]) ex
   /**
    * Helper method.
    */
-  def stringifyLambdas() =
+  private[this] final def stringifyLambdas() =
     lambdas.map(_.toString).reduce {
       _ + " " + _
     }
@@ -37,7 +37,7 @@ class BoundVariable(val literal: String, val lambdas: List[LambdaExpression]) ex
     // if we don't have a bound variable yet, reduce this bound variable arguments wrapping everything in a EX
     if (newVariable.isEmpty) new NonEmptyLambdaExpression(lambdas.map(_.betaReduce(arg, literal)))
     // if instead we already have a variable to reduce but this is a bound variable
-    // with the same literal, hence this is a free variable, do nothing.
+    // with the same literal, it means that this is a free variable, return itself.
     else if (newVariable == literal) this
     // otherwise we do have a variable to reduce, reduce this bound variable
     else new BoundVariable(literal, lambdas.map(_.betaReduce(arg, newVariable)))

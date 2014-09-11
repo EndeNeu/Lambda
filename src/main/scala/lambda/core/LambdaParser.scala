@@ -4,28 +4,27 @@ import lambda.model.{NonEmptyLambdaExpression, Argument, LambdaExpression, Bound
 
 object LambdaParser {
 
+  // split all spaces which are not inside ()
+  val regex = " (?![^(]*\\))"
 
   def fromString(expression: String) = new NonEmptyLambdaExpression(parseString(expression))
 
   // λx.x
-  def parseString(expression: String): List[LambdaExpression] = {
-    val splitted: Array[String] = expression.split(" (?![^(]*\\))")
-//    println("spl")
-//    splitted.map(println)
+  private[this] def parseString(expression: String): List[LambdaExpression] = {
+    val splitted: Array[String] = expression.split(regex)
     splitted.map(buildLambda).toList
   }
 
-  def buildLambda(expression: String): LambdaExpression = {
+  private[this] def buildLambda(expression: String): LambdaExpression = {
 //    println("exp")
 //    println(expression)
-    if (expression.startsWith("λ")) new BoundVariable(expression.tail.head.toString, parseString(parseBoundVariableArgument(expression.split("\\.", 2).tail)))
-    else new Argument(expression(0).toString)
+    if (expression.startsWith("λ"))
+      new BoundVariable(expression.tail.head.toString, parseString(parseBoundVariableArgument(expression.split("\\.", 2).tail)))
+    else
+      new Argument(expression(0).toString)
   }
 
   def parseBoundVariableArgument(arguments: Array[String]): String = {
-//    println("args")
-//    println(arguments.head.drop(1).dropRight(1))
-
     if (arguments.head.length == 1 || arguments.head == "λ") arguments.head
     else arguments.head.drop(1).dropRight(1)
   }

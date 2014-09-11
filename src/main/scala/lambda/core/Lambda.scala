@@ -4,7 +4,7 @@ import lambda.LambdaBuilder.{AR, BV, EX}
 import lambda.model.{BoundVariable, NonEmptyLambdaExpression}
 
 /**
- * Contains some fuoundamental lambda functions.
+ * Contains some fundamental lambda functions.
  */
 object Lambda {
 

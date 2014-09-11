@@ -8,7 +8,8 @@ object EmptyLambdaExpression extends LambdaExpression {
 
   def empty: LambdaExpression = this
 
-  override def betaReduce(arg: LambdaExpression, newVariable: String): LambdaExpression = EmptyLambdaExpression
+  override def betaReduce(arg: LambdaExpression, newVariable: String): LambdaExpression =
+    EmptyLambdaExpression
 
   override def toString =
     throw new LambdaException("Empty expression has no toString method.")

@@ -20,13 +20,13 @@ class NonEmptyLambdaExpression(val lambdas: List[LambdaExpression]) extends Lamb
   /**
    * Flattens a list of LambdaExpressions.
    */
-  def flatExpressions(): List[LambdaExpression] =
+  private[model] def flatExpressions(): List[LambdaExpression] =
     flatList(lambdas)
 
   /**
    * Helper method
    */
-  def flatList(expressions: List[LambdaExpression]): List[LambdaExpression] =
+  private[this] final def flatList(expressions: List[LambdaExpression]): List[LambdaExpression] =
     expressions.foldLeft(List(): List[LambdaExpression])((acc, curr) => curr match {
       case ex: NonEmptyLambdaExpression => acc ++ ex.flatExpressions()
       case variable@(_: Argument | _: BoundVariable) => acc.:+(variable)
@@ -86,7 +86,7 @@ class NonEmptyLambdaExpression(val lambdas: List[LambdaExpression]) extends Lamb
   /**
    * Helper function that folds a list of lambdas
    */
-  private def betaReducerHelper(expressions: List[LambdaExpression]): List[LambdaExpression] =
+  private[this] final def betaReducerHelper(expressions: List[LambdaExpression]): List[LambdaExpression] =
   // @TODO avoid wrapping bound variable reduction in a non empty expression.
   // the flat list is necessary because lambda reductions for bound variables have a NonEmptyLambdaExpression as wrapper
   // that means that a reduced bound variable is always wrapped in a NonEmpty, to avoid problems

@@ -34,11 +34,12 @@ trait LambdaExpression {
 
   /**
    * Helper method that look ahead in the lambda to fix some spacing issues
-   * when outputting the expression to string.
+   * when outputting an expression to string.
    *
-   * @param current
-   * @param expressions
-   * @return
+   * @param current: LambdaExpression
+   * @param expressions: List[LambdaExpression]
+   *
+   * @return String
    */
   def lookAhead(current: LambdaExpression, expressions: List[LambdaExpression]): String = {
     if (expressions.nonEmpty) {
